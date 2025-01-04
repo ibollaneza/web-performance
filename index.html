@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Performance Monitor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: #000000;
+            color: #00FF00;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border: 2px solid #00FF00;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #00FF00;
+            width: 80%;
+            max-width: 600px;
+            z-index: 10;
+            position: relative;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 2px solid #00FF00;
+            background-color: #000000;
+            color: #00FF00;
+            font-size: 1em;
+        }
+
+        button {
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        button:hover {
+            background-color: #00FF00;
+            color: #000000;
+        }
+
+        .monitor {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-style: italic;
+            white-space: pre-wrap;
+            overflow: hidden;
+            height: 400px;
+            text-align: left;
+            border: 2px solid #00FF00;
+            padding: 10px;
+            overflow-y: scroll;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            overflow: hidden;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix"></div>
+    <div class="container">
+        <h1>Website Performance Monitor</h1>
+        <input type="text" id="urlInput" placeholder="Enter website URL">
+        <button onclick="startMonitoring()">Start Monitoring</button>
+        <div id="monitorContainer" class="monitor" style="display: none;"></div>
+    </div>
+
+    <script>
+        function isValidURL(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function startMonitoring() {
+            const urlInput = document.getElementById('urlInput').value;
+            if (isValidURL(urlInput)) {
+                document.getElementById('monitorContainer').style.display = 'block';
+                simulateMonitoring(urlInput);
+            } else {
+                alert('Invalid URL');
+            }
+        }
+
+        function simulateMonitoring(url) {
+            const monitorContainer = document.getElementById('monitorContainer');
+            monitorContainer.innerText = `Monitoring URL: ${url}\n\n`;
+
+            const metrics = [
+                "Response Time", 
+                "Status Code", 
+                "Uptime", 
+                "Throughput", 
+                "CPU Usage", 
+                "Memory Usage", 
+                "Disk I/O", 
+                "Network Latency", 
+                "Error Rate"
+            ];
+            const units = ["ms", "", "%", "req/s", "%", "MB", "MB/s", "ms", "%"];
+
+            setInterval(() => {
+                const metricData = metrics.map((metric, index) => {
+                    const value = (Math.random() * (index === 0 ? 1000 : index === 1 ? 500 : index === 2 ? 100 : index === 3 ? 200 : index === 4 ? 100 : index === 5 ? 16000 : index === 6 ? 500 : index === 7 ? 100 : 5)).toFixed(index === 2 || index === 4 || index === 8 ? 2 : 0);
+                    return `${metric.padEnd(20, ' ')}: ${value} ${units[index]}`;
+                }).join('\n');
+
+                monitorContainer.innerText = `Monitoring URL: ${url}\n\n${metricData}\n`;
+            }, 1000);
+        }
+
+        // Matrix rain effect
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        document.querySelector('.matrix').appendChild(canvas);
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrixCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#00FF00";
+            ctx.font = fontSize + "px 'VT323', monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixCharacters.charAt(Math.floor(Math.random() * matrixCharacters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+    </script>
+</body>
+</html>
