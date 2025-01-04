@@ -125,14 +125,12 @@
             ];
             const units = ["ms", "", "%", "req/s", "%", "MB", "MB/s", "ms", "%"];
 
-            setInterval(() => {
-                const metricData = metrics.map((metric, index) => {
-                    const value = (Math.random() * (index === 0 ? 1000 : index === 1 ? 500 : index === 2 ? 100 : index === 3 ? 200 : index === 4 ? 100 : index === 5 ? 16000 : index === 6 ? 500 : index === 7 ? 100 : 5)).toFixed(index === 2 || index === 4 || index === 8 ? 2 : 0);
-                    return `${metric.padEnd(20, ' ')}: ${value} ${units[index]}`;
-                }).join('\n');
+            const metricData = metrics.map((metric, index) => {
+                const value = (Math.random() * (index === 0 ? 1000 : index === 1 ? 500 : index === 2 ? 100 : index === 3 ? 200 : index === 4 ? 100 : index === 5 ? 16000 : index === 6 ? 500 : index === 7 ? 100 : 5)).toFixed(index === 2 || index === 4 || index === 8 ? 2 : 0);
+                return `${metric.padEnd(20, ' ')}: ${value} ${units[index]}`;
+            }).join('\n');
 
-                monitorContainer.innerText = `Monitoring URL: ${url}\n\n${metricData}\n`;
-            }, 1000);
+            monitorContainer.innerText += metricData;
         }
 
         // Matrix rain effect
@@ -140,8 +138,13 @@
         const ctx = canvas.getContext('2d');
         document.querySelector('.matrix').appendChild(canvas);
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
         const matrixCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
         const fontSize = 16;
